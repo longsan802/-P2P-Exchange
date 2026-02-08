@@ -58,11 +58,66 @@ async def language_selection(update: Update, context: ContextTypes.DEFAULT_TYPE)
     welcome_text = get_text('start', lang, wallet=USDT_WALLET)
     await query.edit_message_text(welcome_text)
     
-    # Show help after language selection
-    help_text = get_text('help', lang, wallet=USDT_WALLET)
-    await query.message.reply_text(help_text)
+    # Show next steps with buttons
+    keyboard = [
+        [InlineKeyboardButton(get_text('btn_exchange', lang), callback_data='action_exchange')],
+        [InlineKeyboardButton(get_text('btn_check_rate', lang), callback_data='action_rate')],
+        [InlineKeyboardButton(get_text('btn_help', lang), callback_data='action_help')]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    await query.message.reply_text(
+        get_text('next_steps', lang),
+        reply_markup=reply_markup
+    )
     
     return ConversationHandler.END
+
+
+async def handle_next_steps(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle next steps button clicks"""
+    query = update.callback_query
+    await query.answer()
+    
+    action = query.data
+    user = query.from_user
+    lang = db.get_user_language(user.id)
+    
+    if action == 'action_exchange':
+        # Start exchange process
+        await new_order(update, context)
+    elif action == 'action_rate':
+        # Show exchange rate
+        rate = db.get_current_rate()
+        fee = FEE_PERCENTAGE
+        rate_text = get_text('rate', lang, rate=rate, fee=fee)
+        await query.message.reply_text(rate_text)
+        # Show next steps again
+        keyboard = [
+            [InlineKeyboardButton(get_text('btn_exchange', lang), callback_data='action_exchange')],
+            [InlineKeyboardButton(get_text('btn_check_rate', lang), callback_data='action_rate')],
+            [InlineKeyboardButton(get_text('btn_help', lang), callback_data='action_help')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.message.reply_text(
+            get_text('next_steps', lang),
+            reply_markup=reply_markup
+        )
+    elif action == 'action_help':
+        # Show help
+        help_text = get_text('help', lang, wallet=USDT_WALLET)
+        await query.message.reply_text(help_text)
+        # Show next steps again
+        keyboard = [
+            [InlineKeyboardButton(get_text('btn_exchange', lang), callback_data='action_exchange')],
+            [InlineKeyboardButton(get_text('btn_check_rate', lang), callback_data='action_rate')],
+            [InlineKeyboardButton(get_text('btn_help', lang), callback_data='action_help')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.message.reply_text(
+            get_text('next_steps', lang),
+            reply_markup=reply_markup
+        )
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /help command"""
@@ -384,6 +439,7 @@ def main():
     application.add_handler(CommandHandler('status', status_command))
     application.add_handler(order_conv)
     application.add_handler(CallbackQueryHandler(handle_admin_callback, pattern='^(approve|reject)_'))
+    application.add_handler(CallbackQueryHandler(handle_next_steps, pattern='^action_'))
     application.add_error_handler(error_handler)
     
     if WEBHOOK_ENABLED:

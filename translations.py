@@ -29,6 +29,16 @@ Commands:
 1 USD = {rate} KHR
 Fee: {fee}%""",
         'language_select': "🌐 Select your language:",
+        'next_steps': """🚀 Next Steps
+
+What would you like to do next?
+
+• Click 💱 Exchange to start exchanging USDT
+• Click 💰 Check Rate to see current exchange rate
+• Click 📚 Help for more information""",
+        'btn_exchange': "💱 Exchange",
+        'btn_check_rate': "💰 Check Rate",
+        'btn_help': "📚 Help",
         
         # Order process
         'enter_amount': "💵 Enter the amount of USDT you sent:",
@@ -115,6 +125,16 @@ Account: {account}
 1 USD = {rate} KHR
 ថ្លៃសេវា: {fee}%""",
         'language_select': "🌐 ជ្រើសភាសា:",
+        'next_steps': """🚀 ជំហានបន្ទាប់
+
+តើអ្នកចង់ធ្វើអ្វីបន្ទាប់?
+
+• ចុច 💱 ប្តូរ ដើម្បីចាប់ផ្តើមប្តូរ USDT
+• ចុច 💰 ពិនិត្យ ដើម្បីមើលអត្រា
+• ចុច 📚 ជំនួយ សម្រាប់ព័ត៌មានបន្ថែម""",
+        'btn_exchange': "💱 ប្តូរ",
+        'btn_check_rate': "💰 ពិនិត្យ",
+        'btn_help': "📚 ជំនួយ",
         
         # Order process
         'enter_amount': "💵 បញ្ចូលចំនួន USDT ដែលអ្នកផ្ញើ:",
@@ -201,6 +221,16 @@ Account: {account}
 1 美元 = {rate} KHR
 手续费: {fee}%""",
         'language_select': "🌐 选择您的语言:",
+        'next_steps': """🚀 下一步
+
+您想做什么？
+
+• 点击 💱 兑换 开始兑换 USDT
+• 点击 💰 汇率 查看当前汇率
+• 点击 📚 帮助 获取更多信息""",
+        'btn_exchange': "💱 兑换",
+        'btn_check_rate': "💰 汇率",
+        'btn_help': "📚 帮助",
         
         # Order process
         'enter_amount': "💵 输入您发送的 USDT 金额:",
