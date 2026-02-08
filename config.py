@@ -5,9 +5,9 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "8500717921:AAEaBkRtmrUZFJ0Cd4HFI0_spzN8
 ADMIN_IDS = [int(x) for x in os.environ.get("ADMIN_IDS", "8057226500").split(",")]
 
 # Webhook Configuration
-WEBHOOK_ENABLED = os.environ.get("WEBHOOK_ENABLED", "False").lower() == "true"
-WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "https://your-domain.com/webhook")
-WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "your_webhook_secret_token")
+WEBHOOK_ENABLED = os.environ.get("WEBHOOK_ENABLED", "True").lower() == "true"
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "https://p2p-exchange-7qxm.onrender.com/webhook")
+WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "secure_bot_token_2024")
 
 # Webhook SSL Certificate (use Render's certificate)
 SSL_CERT_PATH = os.environ.get("SSL_CERT_PATH", "cert.pem")
@@ -15,7 +15,7 @@ SSL_PRIVKEY_PATH = os.environ.get("SSL_PRIVKEY_PATH", "privkey.pem")
 
 # Webhook Server Settings
 WEBHOOK_HOST = os.environ.get("WEBHOOK_HOST", "0.0.0.0")
-WEBHOOK_PORT = int(os.environ.get("PORT", "8443"))
+WEBHOOK_PORT = int(os.environ.get("PORT", "10000"))
 
 # USDT TRC20 Wallet
 USDT_WALLET = os.environ.get("USDT_WALLET", "TPtKtKZH8oQiYkbwqgYxmeEBn5ZTTSKW8A")

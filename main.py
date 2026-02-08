@@ -394,7 +394,7 @@ def main():
         # Build SSL context
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         
-        # Try to load certificate files if they exist
+        # Check if SSL certificates exist
         if os.path.exists(SSL_CERT_PATH) and os.path.exists(SSL_PRIVKEY_PATH):
             ssl_context.load_cert_chain(
                 certfile=SSL_CERT_PATH,
@@ -402,30 +402,46 @@ def main():
             )
             print("Loaded SSL certificate from configured paths")
         else:
-            # Generate self-signed certificate for testing
-            import subprocess
-            print("Generating self-signed SSL certificate...")
-            subprocess.run([
-                'openssl', 'req', '-x509', '-newkey', 'rsa:2048',
-                '-keyout', SSL_PRIVKEY_PATH, '-out', SSL_CERT_PATH,
-                '-days', '365', '-nodes',
-                '-subj', '/CN=localhost'
-            ], check=True)
-            ssl_context.load_cert_chain(
-                certfile=SSL_CERT_PATH,
-                keyfile=SSL_PRIVKEY_PATH
-            )
-            print("Self-signed SSL certificate generated")
+            # For Render: use HTTP (no SSL) since Render handles SSL termination
+            # Or generate self-signed for local testing
+            if WEBHOOK_URL.startswith("https://"):
+                print("SSL certificates not found. Assuming Render SSL termination (HTTP mode)")
+                ssl_context = None
+            else:
+                # Generate self-signed certificate for testing
+                import subprocess
+                print("Generating self-signed SSL certificate...")
+                subprocess.run([
+                    'openssl', 'req', '-x509', '-newkey', 'rsa:2048',
+                    '-keyout', SSL_PRIVKEY_PATH, '-out', SSL_CERT_PATH,
+                    '-days', '365', '-nodes',
+                    '-subj', '/CN=localhost'
+                ], check=True, capture_output=True)
+                ssl_context.load_cert_chain(
+                    certfile=SSL_CERT_PATH,
+                    keyfile=SSL_PRIVKEY_PATH
+                )
+                print("Self-signed SSL certificate generated")
         
         # Set webhook
-        application.run_webhook(
-            listen=WEBHOOK_HOST,
-            port=WEBHOOK_PORT,
-            secret_token=WEBHOOK_SECRET,
-            webhook_url=WEBHOOK_URL,
-            ssl_context=ssl_context,
-            drop_pending_updates=True
-        )
+        if ssl_context:
+            application.run_webhook(
+                listen=WEBHOOK_HOST,
+                port=WEBHOOK_PORT,
+                secret_token=WEBHOOK_SECRET,
+                webhook_url=WEBHOOK_URL,
+                ssl_context=ssl_context,
+                drop_pending_updates=True
+            )
+        else:
+            # For Render: run without SSL (Render handles it)
+            application.run_webhook(
+                listen=WEBHOOK_HOST,
+                port=WEBHOOK_PORT,
+                secret_token=WEBHOOK_SECRET,
+                webhook_url=WEBHOOK_URL,
+                drop_pending_updates=True
+            )
     else:
         # Polling mode (default)
         print("Starting bot in POLLING mode...")
